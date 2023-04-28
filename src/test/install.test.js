@@ -22,4 +22,18 @@ describe('install', () => {
     const pkgJSON = JSON.parse(await fs.readFile(fsPath.join(testPath, 'package.json'), { encoding: 'utf8' }))
     expect(pkgJSON?.dependencies['http-errors']).toBeTruthy()
   })
+
+  test("'saveDev' switches package to devDependencies", async () => {
+    const testPath = fsPath.join(__dirname, 'pkgIn001')
+    install({ pkgs: [ 'http-errors' ], saveDev: true, targetPath: testPath })
+    const pkgJSON = JSON.parse(await fs.readFile(fsPath.join(testPath, 'package.json'), { encoding: 'utf8' }))
+    expect(pkgJSON?.devDependencies['http-errors']).toBeTruthy()
+  })
+
+  test("'saveProd' switches package to dependencies", async () => {
+    const testPath = fsPath.join(__dirname, 'pkgIn001')
+    install({ pkgs: [ 'http-errors' ], saveProd: true, targetPath: testPath })
+    const pkgJSON = JSON.parse(await fs.readFile(fsPath.join(testPath, 'package.json'), { encoding: 'utf8' }))
+    expect(pkgJSON?.dependencies['http-errors']).toBeTruthy()
+  })  
 })
