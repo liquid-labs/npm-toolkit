@@ -13,5 +13,12 @@
   "bugs": {
     "url": "https://github.com/liquid-labs/npm-toolkit/issues"
   },
-  "homepage": "https://github.com/liquid-labs/npm-toolkit#readme"
+  "homepage": "https://github.com/liquid-labs/npm-toolkit#readme",
+  "dependencies": {
+    "@liquid-labs/catalyst-scripts-node-project": "^1.0.0-alpha.6",
+    "@liquid-labs/shell-toolkit": "^1.0.0-alpha.4"
+  },
+  "bin": {
+    "npm-toolkit": "dist/npm-toolkit-cli.js"
+  }
 }
