@@ -1,0 +1,19 @@
+Test git rev: 434c612c77271caea23c013976e5069c2fe0d37a
+PASS test/install.test.js
+PASS test/update.test.js
+--------------------|---------|----------|---------|---------|-------------------
+File                | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+--------------------|---------|----------|---------|---------|-------------------
+All files           |   93.65 |    75.86 |     100 |   89.74 |                   
+ src                |   90.24 |     67.5 |     100 |   85.18 |                   
+  install.mjs       |   85.18 |    67.85 |     100 |   77.77 | 5,8,11,14         
+  update.mjs        |     100 |    66.66 |     100 |     100 | 4-8               
+ src/test           |     100 |    94.44 |     100 |     100 |                   
+  test-setup-lib.js |     100 |    94.44 |     100 |     100 | 6                 
+--------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 2 passed, 2 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        3.495 s, estimated 4 s
+Ran all test suites.
