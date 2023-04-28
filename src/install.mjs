@@ -1,6 +1,6 @@
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
-const install = ({ global, latest, pkgs, saveDev, saveProd, targetPath, version }) => {
+const install = ({ global, latest, pkgs, saveDev, saveProd, targetPath, verbose, version }) => {
   if (pkgs === undefined || pkgs.length === 0) {
     throw new Error("No 'pkgs' specified; specify at least one package.")
   }
@@ -22,7 +22,7 @@ const install = ({ global, latest, pkgs, saveDev, saveProd, targetPath, version 
   const installPkgs = pkgs.map((p) => p + versionBit).join(' ')
 
   const cmd = pathBit + 'npm install ' + globalBit + saveBit + installPkgs
-  tryExec(cmd)
+  tryExec(cmd, { silent : !verbose })
 }
 
 export { install }
