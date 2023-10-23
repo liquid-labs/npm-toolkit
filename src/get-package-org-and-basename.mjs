@@ -5,8 +5,8 @@ const getPackageOrgAndBasename = async(options = {}) => {
   if (argCount > 1 || argCount === 0) {
     throw new Error("getPackageOrgAndBasename: must specify exactly one of 'pkgDir', 'pkgJSON', or 'pkgName'.")
   }
-  const { pkgDir, pkgJSON } = options
-  let { pkgName } = options
+  const { pkgDir } = options
+  let { pkgJSON, pkgName } = options
 
   if (pkgDir !== undefined) {
     pkgJSON = await getPackageJSON({ pkgDir })
