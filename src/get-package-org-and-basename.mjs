@@ -1,23 +1,27 @@
 import { getPackageJSON } from './get-package-json'
 
-const getPackageOrgAndBasename = async({ pkgDir, pkgJSON }) => {
+const getPackageOrgAndBasename = async(options = {}) => {
+  const argCount = Object.keys(options).length
+  if (argCount > 1 || argCount === 0) {
+    throw new Error("getPackageOrgAndBasename: must specify exactly one of 'pkgDir', 'pkgJSON', or 'pkgName'.")
+  }
+  const { pkgDir } = options
+  let { pkgJSON, pkgName } = options
+
   if (pkgDir !== undefined) {
-    if (pkgJSON !== undefined) {
-      throw new Error("getPackageOrgAndBasename: cannot specify both 'pkgJSON' and 'pkgDir'.")
-    }
     pkgJSON = await getPackageJSON({ pkgDir })
   }
+  if (pkgJSON !== undefined) {
+    pkgName = pkgJSON.name
+  }
 
-  const { name } = pkgJSON
-
-  if (name.startsWith('@')) {
-    const [org, basename] = name.slice(1).split('/')
-
+  if (pkgName.startsWith('@')) {
+    const [org, basename] = pkgName.slice(1).split('/')
     return { basename, org }
   }
   else {
     return {
-      basename : name,
+      basename : pkgName,
       org      : undefined
     }
   }
