@@ -1,4 +1,5 @@
 # npm-toolkit
+[![Unit tests](https://github.com/liquid-labs/npm-toolkit/actions/workflows/unit-tests-node.yaml/badge.svg)](https://github.com/liquid-labs/npm-toolkit/actions/workflows/unit-tests-node.yaml)
 
 A programmatic wrapper around key npm functions and package manipulation utilities.
 
