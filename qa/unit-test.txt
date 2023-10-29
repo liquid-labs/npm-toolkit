@@ -1,0 +1,20 @@
+Test git rev: 59bfebb8efbb0cb27d5ba847164ab9d39ebc91f5
+PASS test/install.test.js
+PASS test/update.test.js
+PASS test/get-package-org-and-basename.test.js
+PASS test/get-package-json.test.js
+----------------------------------|---------|----------|---------|---------|-------------------
+File                              | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------------------------|---------|----------|---------|---------|-------------------
+All files                         |   85.05 |    74.02 |     100 |   90.99 |                   
+ get-package-json.mjs             |     100 |    93.75 |     100 |     100 | 14                
+ get-package-org-and-basename.mjs |      96 |    88.23 |     100 |     100 | 3                 
+ install.mjs                      |   87.83 |       68 |     100 |   95.65 | 10-11             
+ update.mjs                       |   70.37 |    71.73 |     100 |   78.94 | 32-35,48,66,77-78 
+----------------------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 4 passed, 4 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        4.316 s, estimated 5 s
+Ran all test suites.
