@@ -73,7 +73,16 @@ workflows:
 badges:
   coverage:
     dependencies: []
-    artifacts: []
+    artifacts:
+      - builder: '@liquid-labs/catalyst-builder-badge-coverage'
+        version: 1.0.0-alpha.0
+        priority: 0
+        content: >-
+          [![coverage:
+          91%](./.readme-assets/coverage.svg)](https://github.com/liquid-labs/npm-toolkit/pulls?q=is%3Apr+is%3Aclosed)
+        path: >-
+          /Users/zane/.liq/playground/liquid-labs/npm-toolkit/.readme-assets/coverage.svg
+        purpose: Test coverage badge for README.md.
   github-workflow:
     dependencies: []
     artifacts:
