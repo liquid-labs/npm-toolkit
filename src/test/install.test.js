@@ -37,7 +37,7 @@ describe('install', () => {
     const { pkgPath, testPath } = await setupTestPackage({ noReset : true, pkgName : 'pkgIn001' })
     const devPaths = [fsPath.resolve(__dirname, '..', '..')]
 
-    await install({ devPaths, pkgs : ['@liquid-labs/npm-toolkit'], targetPath: testPath })
+    await install({ devPaths, pkgs : ['@liquid-labs/npm-toolkit'], targetPath : testPath })
     const pkgJSON = JSON.parse(await fs.readFile(pkgPath, { encoding : 'utf8' }))
     expect(pkgJSON?.dependencies['@liquid-labs/npm-toolkit']).toMatch(/^file:/)
   })

@@ -4,7 +4,7 @@ import * as fsPath from 'node:path'
 
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
-const findLocalPackage = async ({ devPaths, npmName }) => {
+const findLocalPackage = async({ devPaths, npmName }) => {
   let [org, basename] = npmName.split('/')
   if (basename === undefined) {
     basename = org
@@ -24,7 +24,7 @@ const findLocalPackage = async ({ devPaths, npmName }) => {
       fsPath.join(devPath, '@' + pkgPath)
     ]) {
       if (existsSync(testPath)) {
-        const packageJSONContents = await fs.readFile(testPath, { encoding: 'utf8' })
+        const packageJSONContents = await fs.readFile(testPath, { encoding : 'utf8' })
         const packageJSON = JSON.parse(packageJSONContents)
         const { name } = packageJSON
         if (npmName === name) {
@@ -37,7 +37,7 @@ const findLocalPackage = async ({ devPaths, npmName }) => {
   return null
 }
 
-const install = async ({ devPaths, global, latest, pkgs, saveDev, saveProd, targetPath, verbose, version }) => {
+const install = async({ devPaths, global, latest, pkgs, saveDev, saveProd, targetPath, verbose, version }) => {
   if (pkgs === undefined || pkgs.length === 0) {
     throw new Error("No 'pkgs' specified; specify at least one package.")
   }
@@ -57,7 +57,7 @@ const install = async ({ devPaths, global, latest, pkgs, saveDev, saveProd, targ
   const versionBit = latest === true ? '@latest' : version !== undefined ? '@' + version : ''
 
   const installPkgs = (await Promise.all(pkgs
-    .map(async (p) => {
+    .map(async(p) => {
       if (devPaths) {
         const localPath = await findLocalPackage({ devPaths, npmName : p })
         if (localPath !== null) {

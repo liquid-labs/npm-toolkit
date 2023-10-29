@@ -7,20 +7,20 @@ import { tryExec } from '@liquid-labs/shell-toolkit'
 
 /**
  * Updates project dependencies or global installs. Requires at 'global' and/or `projectPath` be provided.
- * 
+ *
  * ### Parameters
- * 
+ *
  * - `dryRun`: __(opt,  boolean)__ check for outdated dependecies and display results, but don't actually update.
- * - `global`: __(cond, boolean)__ operate on the globally installed packages instead of `projectPath` dependencies. 
+ * - `global`: __(cond, boolean)__ operate on the globally installed packages instead of `projectPath` dependencies.
  *   One of `global` and `projectPath` must be provided.
- * - `packages`: __(opt, strings[])__ only check the named packages. If `global` is true, this would be a list of 
+ * - `packages`: __(opt, strings[])__ only check the named packages. If `global` is true, this would be a list of
  *   global packages and otherwise a list of `projectPath` dependencies.
- * - `projectName` __(opt, string)__ the name of the project to use in user output. This should be the NPM name. If 
+ * - `projectName` __(opt, string)__ the name of the project to use in user output. This should be the NPM name. If
  *   none is provided, then the name will be extracted from `package.json` file at `projectPath`.
- * - `projectPath`: __(cond, string)__ the path to the project to update. One of `global` and `projectPath` must be 
+ * - `projectPath`: __(cond, string)__ the path to the project to update. One of `global` and `projectPath` must be
  *   provided.
  */
-const update = async ({ dryRun, global, packages = [], projectName, projectPath }) => {
+const update = async({ dryRun, global, packages = [], projectName, projectPath }) => {
   if (projectPath === undefined && !global) {
     throw new Error("Must either set 'global' true (exclusive) and/or provide 'projectPath'.")
   }
@@ -38,14 +38,12 @@ const update = async ({ dryRun, global, packages = [], projectName, projectPath 
   const actions = []
   let updateCommand
 
-
   // no 'set -e' because 'outdated' exits '1' if there's anything to update.
-  let outdatedCommand = (global === true ? '' : `cd "${projectPath}";`) 
+  let outdatedCommand = (global === true ? '' : `cd "${projectPath}";`)
     + 'npm '
     + (global === true ? '--global ' : '')
     + '--json outdated'
 
-  
   if (packages.length > 0) {
     outdatedCommand += packages.join(' ')
   }
@@ -60,8 +58,8 @@ const update = async ({ dryRun, global, packages = [], projectName, projectPath 
   try {
     outdatedData = JSON.parse(outdatedResult.stdout)
   }
-  catch (err) {
-    throw new Error(`Could not parse update data '${outdatedResult.stdout}': ${err}`, { cause: e })
+  catch (e) {
+    throw new Error(`Could not parse update data '${outdatedResult.stdout}': ${e}`, { cause : e })
   }
 
   if (!outdatedData || Object.keys(outdatedData).length === 0) {
