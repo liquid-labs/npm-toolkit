@@ -21,12 +21,16 @@
   },
   "homepage": "https://github.com/liquid-labs/npm-toolkit#readme",
   "dependencies": {
-    "@liquid-labs/catalyst-scripts-node-project": "^1.0.0-alpha.6",
     "@liquid-labs/shell-toolkit": "^1.0.0-alpha.4",
     "find-root": "^1.1.0",
     "http-errors": "^2.0.0"
   },
   "bin": {
     "npm-toolkit": "dist/npm-toolkit-cli.js"
+  },
+  "devDependencies": {
+    "@liquid-labs/catalyst-resource-babel-and-rollup": "^1.0.0-alpha.3",
+    "@liquid-labs/catalyst-resource-eslint": "^1.0.0-alpha.1",
+    "@liquid-labs/catalyst-resource-jest": "^1.0.0-alpha.4"
   }
 }
