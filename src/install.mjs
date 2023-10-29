@@ -1,9 +1,10 @@
 import { existsSync } from 'node:fs'
+import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
-const findLocalPackage = ({ devPaths, npmName }) => {
+const findLocalPackage = async({ devPaths, npmName }) => {
   let [org, basename] = npmName.split('/')
   if (basename === undefined) {
     basename = org
@@ -17,9 +18,18 @@ const findLocalPackage = ({ devPaths, npmName }) => {
     : fsPath.join(org, basename, 'package.json')
   for (const devPath of devPaths) {
     // TODO: this is a workaround until we transition fully to matching NPM names
-    for (const testPath of [fsPath.join(devPath, pkgPath), fsPath.join(devPath, '@' + pkgPath)]) {
+    for (const testPath of [
+      fsPath.join(devPath, 'package.json'),
+      fsPath.join(devPath, pkgPath),
+      fsPath.join(devPath, '@' + pkgPath)
+    ]) {
       if (existsSync(testPath)) {
-        return fsPath.dirname(testPath)
+        const packageJSONContents = await fs.readFile(testPath, { encoding : 'utf8' })
+        const packageJSON = JSON.parse(packageJSONContents)
+        const { name } = packageJSON
+        if (npmName === name) {
+          return fsPath.dirname(testPath)
+        }
       }
     }
   }
@@ -27,7 +37,7 @@ const findLocalPackage = ({ devPaths, npmName }) => {
   return null
 }
 
-const install = ({ devPaths, global, latest, pkgs, saveDev, saveProd, targetPath, verbose, version }) => {
+const install = async({ devPaths, global, latest, pkgs, saveDev, saveProd, targetPath, verbose, version }) => {
   if (pkgs === undefined || pkgs.length === 0) {
     throw new Error("No 'pkgs' specified; specify at least one package.")
   }
@@ -46,16 +56,16 @@ const install = ({ devPaths, global, latest, pkgs, saveDev, saveProd, targetPath
   const saveBit = saveDev === true ? '--save-dev ' : saveProd === true ? '--save-prod ' : ''
   const versionBit = latest === true ? '@latest' : version !== undefined ? '@' + version : ''
 
-  const installPkgs = pkgs
-    .map((p) => {
+  const installPkgs = (await Promise.all(pkgs
+    .map(async(p) => {
       if (devPaths) {
-        const localPath = findLocalPackage({ devPaths, npmName : p })
+        const localPath = await findLocalPackage({ devPaths, npmName : p })
         if (localPath !== null) {
           return localPath
         }
       }
       return p + versionBit
-    })
+    })))
     .join(' ')
 
   const cmd = pathBit + 'npm install ' + globalBit + saveBit + installPkgs
