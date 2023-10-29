@@ -1,6 +1,6 @@
 {
   "name": "@liquid-labs/npm-toolkit",
-  "version": "1.0.0-alpha.9",
+  "version": "1.0.0-alpha.10",
   "description": "A programmatic wrapper around key npm functions and package manipulation utilities.",
   "main": "dist/npm-toolkit.js",
   "scripts": {
@@ -12,10 +12,13 @@
     "preversion": "npm run qa",
     "qa": "make qa"
   },
-  "keywords": [ "npm", "api", "programmatic" ],
-  "license": "Apache-2.0",
-  "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
+  "keywords": [
+    "npm",
+    "api",
+    "programmatic"
+  ],
   "license": "UNLICENSED",
+  "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "repository": "git+ssh://git@github.com/liquid-labs/npm-toolkit.git",
   "bugs": {
     "url": "https://github.com/liquid-labs/npm-toolkit/issues"
