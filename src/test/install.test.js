@@ -10,7 +10,7 @@ describe('install', () => {
   test('installs new packages', async() => {
     const { pkgPath, testPath } = await setupTestPackage({ pkgName : 'pkgIn001' })
 
-    await install({ pkgs : ['http-errors'], targetPath : testPath })
+    await install({ packages : ['http-errors'], projectPath : testPath })
     const pkgJSON = JSON.parse(await fs.readFile(pkgPath, { encoding : 'utf8' }))
     expect(pkgJSON?.dependencies['http-errors']).toBeTruthy()
   })
@@ -19,7 +19,7 @@ describe('install', () => {
   test("'saveDev' switches package to devDependencies", async() => {
     const { pkgPath, testPath } = await setupTestPackage({ noReset : true, pkgName : 'pkgIn001' })
 
-    await install({ pkgs : ['http-errors'], saveDev : true, targetPath : testPath })
+    await install({ packages : ['http-errors'], saveDev : true, projectPath : testPath })
     const pkgJSON = JSON.parse(await fs.readFile(pkgPath, { encoding : 'utf8' }))
     expect(pkgJSON?.devDependencies['http-errors']).toBeTruthy()
   })
@@ -28,7 +28,7 @@ describe('install', () => {
   test("'saveProd' switches package to dependencies", async() => {
     const { pkgPath, testPath } = await setupTestPackage({ noReset : true, pkgName : 'pkgIn001' })
 
-    await install({ pkgs : ['http-errors'], saveProd : true, targetPath : testPath })
+    await install({ packages : ['http-errors'], saveProd : true, projectPath : testPath })
     const pkgJSON = JSON.parse(await fs.readFile(pkgPath, { encoding : 'utf8' }))
     expect(pkgJSON?.dependencies['http-errors']).toBeTruthy()
   })
@@ -37,7 +37,7 @@ describe('install', () => {
     const { pkgPath, testPath } = await setupTestPackage({ noReset : true, pkgName : 'pkgIn001' })
     const devPaths = [fsPath.resolve(__dirname, '..', '..')]
 
-    await install({ devPaths, pkgs : ['@liquid-labs/npm-toolkit'], targetPath : testPath })
+    await install({ devPaths, packages : ['@liquid-labs/npm-toolkit'], projectPath : testPath })
     const pkgJSON = JSON.parse(await fs.readFile(pkgPath, { encoding : 'utf8' }))
     expect(pkgJSON?.dependencies['@liquid-labs/npm-toolkit']).toMatch(/^file:/)
   })
