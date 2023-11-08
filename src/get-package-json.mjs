@@ -11,7 +11,7 @@ import findRoot from 'find-root'
  *
  * - `pkgDir`: __(req, string)__ a directory within the package. This is not necessarily the root directory.
  */
-const getPackageJSON = async({ pkgDir = throw new Error('Must provide pkgDir.')} = {}) => {
+const getPackageJSON = async({ pkgDir = throw new Error('Must provide pkgDir.') } = {}) => {
   // TODO: would like to support caching using a passed in cache. That would give us the ability to clear the cache
   // whenever something else makes a state change
   const pkgRootDir = findRoot(pkgDir)
