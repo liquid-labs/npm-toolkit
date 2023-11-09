@@ -1,6 +1,6 @@
 {
   "name": "@liquid-labs/npm-toolkit",
-  "version": "1.0.0-alpha.11",
+  "version": "1.0.0-alpha.12",
   "description": "A programmatic wrapper around key npm functions and package manipulation utilities.",
   "main": "dist/npm-toolkit.js",
   "scripts": {
