@@ -12,6 +12,9 @@
     "preversion": "npm run qa",
     "qa": "make qa"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "keywords": [
     "npm",
     "api",
