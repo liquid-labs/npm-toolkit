@@ -51,7 +51,7 @@ const install = async({ devPaths, global, latest, packages, projectPath, saveDev
     throw new Error("May only specify 'latest' or 'version', but not both.")
   }
   if (projectPath === undefined && global !== true) {
-    throw new Error("Must specify 'projectPath'.")
+    throw new Error("Must specify 'projectPath' for non-global installs.")
   }
 
   const pathBit = projectPath === undefined ? '' : 'cd ' + projectPath + ' && '
