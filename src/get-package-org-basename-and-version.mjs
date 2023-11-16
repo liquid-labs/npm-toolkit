@@ -9,12 +9,12 @@ const getDataFromSpec = (pkgSpec) => {
   }
   else {
     const [basename, version] = pkgSpec.split('@')
-    return { name: basename, basename, version }
+    return { name : basename, basename, version }
   }
 }
 
 const getPackageOrgBasenameAndVersion = async(input) => {
-  let packageSpec, name, version
+  let name, version
   if ((typeof input) === 'string') {
     return getDataFromSpec(input)
   }

@@ -18,30 +18,30 @@ const packageSpecData = [
 describe('getPackageOrgBasenameAndVersion', () => {
   describe('extracting from string package spec', () => {
     test.each(packageSpecData)('%s -> name: %s, org: %s, basename: %s, version: %s',
-        async(input, exName, exOrg, exBasename, exVersion) => {
-      const { name, org, basename, version } = await getPackageOrgBasenameAndVersion(input)
-      expect(name).toBe(exName)
-      expect(org).toBe(exOrg)
-      expect(basename).toBe(exBasename)
-      expect(version).toBe(exVersion)
-    })
+      async(input, exName, exOrg, exBasename, exVersion) => {
+        const { name, org, basename, version } = await getPackageOrgBasenameAndVersion(input)
+        expect(name).toBe(exName)
+        expect(org).toBe(exOrg)
+        expect(basename).toBe(exBasename)
+        expect(version).toBe(exVersion)
+      })
   })
 
   describe('extracting from pkgSpec', () => {
     test.each(packageSpecData)('%s -> name: %s, org: %s, basename: %s, version: %s',
-        async(input, exName, exOrg, exBasename, exVersion) => {
-      const { name, org, basename, version } = await getPackageOrgBasenameAndVersion({ pkgSpec: input })
-      expect(name).toBe(exName)
-      expect(org).toBe(exOrg)
-      expect(basename).toBe(exBasename)
-      expect(version).toBe(exVersion)
-    })
+      async(input, exName, exOrg, exBasename, exVersion) => {
+        const { name, org, basename, version } = await getPackageOrgBasenameAndVersion({ pkgSpec : input })
+        expect(name).toBe(exName)
+        expect(org).toBe(exOrg)
+        expect(basename).toBe(exBasename)
+        expect(version).toBe(exVersion)
+      })
   })
 
   describe('extracting from pkgJSON', () => {
     test('handles a root-name package', async() => {
-      const { name, org, basename, version } = 
-        await getPackageOrgBasenameAndVersion({ pkgJSON : { name : 'foo', version: '1.0.2' }})
+      const { name, org, basename, version } =
+        await getPackageOrgBasenameAndVersion({ pkgJSON : { name : 'foo', version : '1.0.2' } })
       expect(name).toBe('foo')
       expect(org).toBe(undefined)
       expect(basename).toBe('foo')
@@ -49,8 +49,8 @@ describe('getPackageOrgBasenameAndVersion', () => {
     })
 
     test('handles an org scoped package', async() => {
-      const { name, org, basename, version } = 
-        await getPackageOrgBasenameAndVersion({ pkgJSON : { name : '@acme/foo', version: '1.0.3' }})
+      const { name, org, basename, version } =
+        await getPackageOrgBasenameAndVersion({ pkgJSON : { name : '@acme/foo', version : '1.0.3' } })
       expect(name).toBe('@acme/foo')
       expect(org).toBe('acme')
       expect(basename).toBe('foo')
@@ -59,7 +59,7 @@ describe('getPackageOrgBasenameAndVersion', () => {
   })
 
   describe('extracting from pkgDir', () => {
-    test("handle an org scoped package", async() => {
+    test('handle an org scoped package', async() => {
       const pkgDir = fsPath.join(__dirname, 'data', 'pkgA')
       const { name, org, basename, version } = await getPackageOrgBasenameAndVersion({ pkgDir })
       expect(name).toBe('@acme/pkg-a')

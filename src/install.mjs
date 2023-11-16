@@ -8,7 +8,7 @@ import { tryExec } from '@liquid-labs/shell-toolkit'
 
 const findLocalPackage = async({ devPaths, pkgSpec }) => {
   const { name, org, basename } = await getPackageOrgBasenameAndVersion(pkgSpec)
-  
+
   const pkgPath = org === undefined
     ? fsPath.join(basename, 'package.json')
     : fsPath.join(org, basename, 'package.json')
@@ -55,7 +55,7 @@ const install = async({ devPaths, global, packages, projectPath, saveDev, savePr
     .map(async(p) => {
       installedPackages.push(p)
       if (devPaths) {
-        const localPath = await findLocalPackage({ devPaths, pkgSpec: p })
+        const localPath = await findLocalPackage({ devPaths, pkgSpec : p })
         if (localPath !== null) {
           localPackages.push(p)
           return localPath
