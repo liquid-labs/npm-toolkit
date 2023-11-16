@@ -42,7 +42,7 @@ describe('install', () => {
     expect(pkgJSON?.dependencies['@liquid-labs/npm-toolkit']).toMatch(/^file:/)
   })
 
-  test("can specify version as part of package", async() => {
+  test('can specify version as part of package', async() => {
     const { pkgPath, testPath } = await setupTestPackage({ pkgName : 'pkgIn001' })
 
     await install({ packages : ['http-errors@latest'], projectPath : testPath })
