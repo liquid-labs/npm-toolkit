@@ -41,4 +41,12 @@ describe('install', () => {
     const pkgJSON = JSON.parse(await fs.readFile(pkgPath, { encoding : 'utf8' }))
     expect(pkgJSON?.dependencies['@liquid-labs/npm-toolkit']).toMatch(/^file:/)
   })
+
+  test('can specify version as part of package', async() => {
+    const { pkgPath, testPath } = await setupTestPackage({ pkgName : 'pkgIn001' })
+
+    await install({ packages : ['http-errors@latest'], projectPath : testPath })
+    const pkgJSON = JSON.parse(await fs.readFile(pkgPath, { encoding : 'utf8' }))
+    expect(pkgJSON?.dependencies['http-errors']).toBeTruthy()
+  })
 })

@@ -20,7 +20,7 @@
     "api",
     "programmatic"
   ],
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "repository": "git+ssh://git@github.com/liquid-labs/npm-toolkit.git",
   "bugs": {
@@ -31,9 +31,6 @@
     "@liquid-labs/shell-toolkit": "^1.0.0-alpha.4",
     "find-root": "^1.1.0",
     "http-errors": "^2.0.0"
-  },
-  "bin": {
-    "npm-toolkit": "dist/npm-toolkit-cli.js"
   },
   "devDependencies": {
     "@liquid-labs/catalyst-resource-babel-and-rollup": "^1.0.0-alpha.3",

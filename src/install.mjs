@@ -2,6 +2,8 @@ import { existsSync } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
+import { getPackageNameAndVersion } from './get-package-name-and-version'
+
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
 const findLocalPackage = async({ devPaths, npmName }) => {
@@ -37,18 +39,12 @@ const findLocalPackage = async({ devPaths, npmName }) => {
   return null
 }
 
-const install = async({ devPaths, global, latest, packages, projectPath, saveDev, saveProd, verbose, version }) => {
+const install = async({ devPaths, global, packages, projectPath, saveDev, saveProd, verbose }) => {
   if (packages === undefined || packages.length === 0) {
     throw new Error("No 'packages' specified; specify at least one package.")
   }
   if (saveProd === true && saveDev === true) {
     throw new Error("Both 'saveDev' and 'saveProd' were specified.")
-  }
-  if (version !== undefined && packages?.length !== 1) {
-    throw new Error("May only specify one package when specifying 'version'.")
-  }
-  if (latest !== undefined && version !== undefined) {
-    throw new Error("May only specify 'latest' or 'version', but not both.")
   }
   if (projectPath === undefined && global !== true) {
     throw new Error("Must specify 'projectPath' for non-global installs.")
@@ -57,22 +53,34 @@ const install = async({ devPaths, global, latest, packages, projectPath, saveDev
   const pathBit = projectPath === undefined ? '' : 'cd ' + projectPath + ' && '
   const globalBit = global === true ? '--global ' : ''
   const saveBit = saveDev === true ? '--save-dev ' : saveProd === true ? '--save-prod ' : ''
-  const versionBit = latest === true ? '@latest' : version !== undefined ? '@' + version : ''
 
+  const localPackages = []
+  const productionPackages = []
+  const installedPackages = []
   const installPkgs = (await Promise.all(packages
     .map(async(p) => {
+      installedPackages.push(p)
       if (devPaths) {
-        const localPath = await findLocalPackage({ devPaths, npmName : p })
+        const { name } = getPackageNameAndVersion(p)
+        const localPath = await findLocalPackage({ devPaths, npmName : name })
         if (localPath !== null) {
+          localPackages.push(p)
           return localPath
         }
       }
-      return p + versionBit
+      productionPackages.push(p)
+      return p
     })))
     .join(' ')
 
   const cmd = pathBit + 'npm install ' + globalBit + saveBit + installPkgs
   tryExec(cmd, { silent : !verbose })
+
+  return {
+    installedPackages,
+    localPackages,
+    productionPackages
+  }
 }
 
 export { install }
