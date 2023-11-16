@@ -20,7 +20,7 @@
     "api",
     "programmatic"
   ],
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "repository": "git+ssh://git@github.com/liquid-labs/npm-toolkit.git",
   "bugs": {
