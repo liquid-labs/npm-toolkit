@@ -17,8 +17,11 @@ import * as fsPath from 'node:path'
 import * as npm from '@liquid-labs/npm-toolkit'
 
 const pkgDir = fsPath.join('path', 'to', 'package')
-const pkgJSON = npm.getPackageJSON(( pkgDir ))
-const { org, basename } = npm.getPackageOrgAndBasename({ pkgJSON })
+const pkgJSON = await npm.getPackageJSON(( pkgDir ))
+const { name, org, basename, version } = npm.getPackageOrgBasenameAndVersion({ pkgJSON })
+// alt forms:
+// const { name, org, basename, version } = await getPackageOrgBasenameAndVersion({ pkgDir })
+// const { name, org, basename, version } = await getPackageOrgBasenameAndVersion('@acme/foo@^1.0')
 
 await nmp.update({ global: true })
 await npm.install({ global: true, packages: ['npm-check@latest' ]})

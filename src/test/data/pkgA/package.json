@@ -1,3 +1,4 @@
 {
-  "name": "@acme/pkg-a"
+  "name": "@acme/pkg-a",
+  "version": "1.0.1"
 }

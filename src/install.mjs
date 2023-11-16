@@ -2,19 +2,13 @@ import { existsSync } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
-import { getPackageNameAndVersion } from './get-package-name-and-version'
+import { getPackageOrgBasenameAndVersion } from './get-package-org-basename-and-version'
 
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
-const findLocalPackage = async({ devPaths, npmName }) => {
-  let [org, basename] = npmName.split('/')
-  if (basename === undefined) {
-    basename = org
-    org = undefined
-  }
-  else if (org.startsWith('@')) {
-    org = org.slice(1) // we will add back on later to test both
-  }
+const findLocalPackage = async({ devPaths, pkgSpec }) => {
+  const { name, org, basename } = await getPackageOrgBasenameAndVersion(pkgSpec)
+  
   const pkgPath = org === undefined
     ? fsPath.join(basename, 'package.json')
     : fsPath.join(org, basename, 'package.json')
@@ -28,8 +22,8 @@ const findLocalPackage = async({ devPaths, npmName }) => {
       if (existsSync(testPath)) {
         const packageJSONContents = await fs.readFile(testPath, { encoding : 'utf8' })
         const packageJSON = JSON.parse(packageJSONContents)
-        const { name } = packageJSON
-        if (npmName === name) {
+        const { name: testName } = packageJSON
+        if (testName === name) {
           return fsPath.dirname(testPath)
         }
       }
@@ -61,8 +55,7 @@ const install = async({ devPaths, global, packages, projectPath, saveDev, savePr
     .map(async(p) => {
       installedPackages.push(p)
       if (devPaths) {
-        const { name } = getPackageNameAndVersion(p)
-        const localPath = await findLocalPackage({ devPaths, npmName : name })
+        const localPath = await findLocalPackage({ devPaths, pkgSpec: p })
         if (localPath !== null) {
           localPackages.push(p)
           return localPath
