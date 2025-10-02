@@ -20,7 +20,7 @@ const view = async({ packageName, version }) => {
   const pkgSpec = version ? `${packageName}@${version}` : packageName
   const cmd = `npm view --json ${pkgSpec}`
 
-  const result = tryExec(cmd, { noThrow: true })
+  const result = tryExec(cmd, { noThrow : true })
 
   if (result.code !== 0) {
     throw new Error(`Package '${pkgSpec}' not found in registry.`)
@@ -30,7 +30,7 @@ const view = async({ packageName, version }) => {
     return JSON.parse(result.stdout)
   }
   catch (e) {
-    throw new Error(`Could not parse npm view output for '${pkgSpec}': ${e.message}`, { cause: e })
+    throw new Error(`Could not parse npm view output for '${pkgSpec}': ${e.message}`, { cause : e })
   }
 }
 
