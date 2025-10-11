@@ -1,10 +1,12 @@
 import { getPackageJSON } from './get-package-json'
 
 const getDataFromSpec = (pkgSpec) => {
+  // Note, the version can be a semver or any tag which is not a semver, so there's no useful validation to be done.
   if (pkgSpec.startsWith('@')) {
     const [org, remainder] = pkgSpec.slice(1).split('/')
     const [basename, version] = remainder.split('@')
     const name = `@${org}/${basename}`
+
     return { name, basename, org, version }
   }
   else {
