@@ -51,7 +51,7 @@ const update = async({ dryRun, global, packages = [], projectName, projectPath }
   const outdatedResult = tryExec(outdatedCommand, { noThrow : true })
   if (outdatedResult.stderr) {
     // notice we can't check 'code' since 'no updates' exits with code '1'; this is arguably an npm bug...
-    throw new Error(`There was an error gathering update data: ${outdatedResult.stdout}`)
+    throw new Error(`There was an error gathering update data: ${outdatedResult.stderr}`)
   }
 
   let outdatedData
