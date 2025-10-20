@@ -1,0 +1,30 @@
+Test git rev: cd180c7cae14d8f369b6cef551616b42a43ee4be
+PASS test/view.test.js (8.909 s)
+PASS test/install.test.js (7.276 s)
+PASS test/update.test.js
+  ● Console
+
+    console.log
+      test G
+
+      at Object.log (../src/test/update.test.js:38:13)
+
+PASS test/get-package-json.test.js
+PASS test/get-package-org-basename-and-version.test.js
+------------------------------------------|---------|----------|---------|---------|----------------------------
+File                                      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s          
+------------------------------------------|---------|----------|---------|---------|----------------------------
+All files                                 |   89.54 |    70.93 |     100 |   89.26 |                            
+ get-package-json.mjs                     |   92.85 |     87.5 |     100 |   91.66 | 17                         
+ get-package-org-basename-and-version.mjs |   96.15 |    88.88 |     100 |   96.15 | 37                         
+ get-version.mjs                          |     100 |      100 |     100 |     100 |                            
+ install.mjs                              |    90.9 |    75.86 |     100 |   90.69 | 33,53,56,59                
+ update.mjs                               |   80.43 |    55.55 |     100 |      80 | 23,26,44,54,62,66-67,78,87 
+ view.mjs                                 |    92.3 |      100 |     100 |    92.3 | 28                         
+------------------------------------------|---------|----------|---------|---------|----------------------------
+
+Test Suites: 5 passed, 5 total
+Tests:       38 passed, 38 total
+Snapshots:   0 total
+Time:        20.029 s
+Ran all test suites.
