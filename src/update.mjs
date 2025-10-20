@@ -6,14 +6,6 @@ import * as semver from '@liquid-labs/semver-plus'
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
 /**
- * @typedef {Object} UpdateResults
- * @property {boolean} updated - Whether any updates were found and applied.
- * @property {string[]} actions - The actions taken during the update.
- * @property {Object} result - The result of the update. This is the JSON emitted by `npm --json update` and may vary
- *   depending on the version of npm, specifically prior to or after v11.0.0.
- */
-
-/**
  * Updates project dependencies or global installs. Requires at 'global' and/or `projectPath` be provided.
  * @param {Object} params - The parameters for the update function.
  * @param {boolean} [params.dryRun] - Check for outdated dependecies and display results, but don't actually update.
@@ -23,7 +15,8 @@ import { tryExec } from '@liquid-labs/shell-toolkit'
  *   global packages and otherwise a list of `projectPath` dependencies.
  * @param {string} [params.projectPath] - The path to the project to update. One of `global` and `projectPath` must be
  *   provided.
- * 
+ * @returns {Promise<{updated: boolean, actions: string[], result: Object}>} A promise that resolves to a summary of
+ *   the updates.
  */
 const update = async({ dryRun, global, packages = [], projectPath }) => {
   if (projectPath === undefined && !global) {

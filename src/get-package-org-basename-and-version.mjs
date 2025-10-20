@@ -23,13 +23,8 @@ const getDataFromSpec = (pkgSpec) => {
  * @param {Object} [input.pkgJSON] - The parsed `package.json` file.
  * @param {string} [input.pkgSpec] - The package spec to extract the package name, organization, basename, and version
  *   from. This can be a scoped package spec (e.g., `@acme/foo@^1.0`) or an unscoped package spec (e.g., `foo@1.0.0`).
- * @returns {Promise<GetPackageOrgBasenameAndVersionResults>} A promise that resolves to an object containing the
- *   package name, organization, basename, and version.
- * @typedef {Object} GetPackageOrgBasenameAndVersionResults
- * @property {string} name - The name of the package.
- * @property {string} org - The organization of the package.
- * @property {string} basename - The basename of the package.
- * @property {string} version - The version of the package.
+ * @returns {Promise<{name: string, org: string, basename: string, version: string}>} A promise that resolves to an
+ *   object with the package name, organization, basename, and version.
  */
 const getPackageOrgBasenameAndVersion = async(input) => {
   let name, version

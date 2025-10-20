@@ -34,13 +34,6 @@ const findLocalPackage = async({ devPaths, pkgSpec }) => {
 }
 
 /**
- * @typedef {Object} InstallResults
- * @property {string[]} installedPackages - The packages that were installed.
- * @property {string[]} localPackages - The local packages that were installed.
- * @property {string[]} productionPackages - The production packages that were installed.
- */
-
-/**
  * Installs packages using `npm install`.
  * @param {Object} params - The parameters for the install function.
  * @param {string[]} [params.devPaths] - An array of paths to search for local packages. Any local packages found will
@@ -52,7 +45,8 @@ const findLocalPackage = async({ devPaths, pkgSpec }) => {
  * @param {boolean} [params.saveProd] - Whether to save the package as a production dependency. This is the default
  *   behavior.
  * @param {boolean} [params.verbose] - Whether to print verbose output.
- * @returns {Promise<InstallResults>} A promise that resolves to the results of the install.
+ * @returns {Promise<{installedPackages: string[], localPackages: string[], productionPackages: string[]}>} A promise
+ *   that resolves to a summary of the installed packages.
  */
 const install = async({ devPaths, global, packages, projectPath, saveDev, saveProd, verbose }) => {
   if (packages === undefined || packages.length === 0) {

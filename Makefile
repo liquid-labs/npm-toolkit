@@ -7,8 +7,7 @@
 SHELL:=bash
 
 default: all
-
-PHONY_TARGETS:=all default
+.PHONY:=default
 
 BUILD_TARGETS:=
 
