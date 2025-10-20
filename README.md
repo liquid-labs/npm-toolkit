@@ -26,3 +26,103 @@ const { name, org, basename, version } = npm.getPackageOrgBasenameAndVersion({ p
 await nmp.update({ global: true })
 await npm.install({ global: true, packages: ['npm-check@latest' ]})
 ```
+##  API reference
+_API generated with [dmd-readme-api](https://www.npmjs.com/package/dmd-readme-api)._
+
+<span id="global-function-index"></span>
+- Functions:
+  - [`getPackageJSON()`](#getPackageJSON): Find and parses the `package.json` associated with the package containing `pkgDir`.
+  - [`getPackageOrgBasenameAndVersion()`](#getPackageOrgBasenameAndVersion): xtracts the package name, organization, basename, and version from a project's `package.json` file.
+  - [`getVersion()`](#getVersion): Retrieves the version of Node.js and npm installed on the system.
+  - [`install()`](#install): Installs packages using `npm install`.
+  - [`update()`](#update): Updates project dependencies or global installs.
+  - [`view()`](#view): Retrieves package metadata from the npm registry using `npm view`.
+
+<a id="getPackageJSON"></a>
+### `getPackageJSON(pkgDir)` ⇒ `Promise.<Object>` <sup>↱<sup>[source code](./src/get-package-json.mjs#L12)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+
+Find and parses the `package.json` associated with the package containing `pkgDir`. The method will check parent
+directories until it finds a `package.json` file or runs out of parent directories.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `pkgDir` | `string` | The path to the package directory or sub-directory. |
+
+**Returns**: `Promise.<Object>` - A promise that resolves to the parsed `package.json` file.
+
+<a id="getPackageOrgBasenameAndVersion"></a>
+### `getPackageOrgBasenameAndVersion(input)` ⇒ `Promise.<{name: string, org: string, basename: string, version: string}>` <sup>↱<sup>[source code](./src/get-package-org-basename-and-version.mjs#L29)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+
+xtracts the package name, organization, basename, and version from a project's `package.json` file.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `input` | `string` \| `Object` | If a string, it's treated as a package spec (e.g. '@acme/foo@^1.0'). Otherwise,   `input` is an object with exactly one of `pkgDir`, `pkgJSON`, or `pkgSpec` specified. |
+| [`input.pkgDir`] | `string` | The path to the package directory. |
+| [`input.pkgJSON`] | `Object` | The parsed `package.json` file. |
+| [`input.pkgSpec`] | `string` | The package spec to extract the package name, organization, basename, and version   from. This can be a scoped package spec (e.g., `@acme/foo@^1.0`) or an unscoped package spec (e.g., `foo@1.0.0`). |
+
+**Returns**: `Promise.<{name: string, org: string, basename: string, version: string}>` - A promise that resolves to an
+  object with the package name, organization, basename, and version.
+
+<a id="getVersion"></a>
+### `getVersion()` ⇒ `Promise.<{nodeVer: string, npmVer: string}>` <sup>↱<sup>[source code](./src/get-version.mjs#L8)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+
+Retrieves the version of Node.js and npm installed on the system.
+
+**Returns**: `Promise.<{nodeVer: string, npmVer: string}>` - A promise that resolves to an object with the Node.js and npm
+  versions as strings without the `v` prefix.
+
+<a id="install"></a>
+### `install(params)` ⇒ `Promise.<{installedPackages: Array.<string>, localPackages: Array.<string>, productionPackages: Array.<string>}>` <sup>↱<sup>[source code](./src/install.mjs#L51)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+
+Installs packages using `npm install`.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `params` | `Object` | The parameters for the install function. |
+| [`params.devPaths`] | `Array.<string>` | An array of paths to search for local packages. Any local packages found will   be used instead of installing from the registry. |
+| [`params.global`] | `boolean` | Whether to install globally. |
+| `params.packages` | `Array.<string>` | List of package specifiers to install. At least one package must be specified. |
+| [`params.projectPath`] | `string` | The path to the project to install. |
+| [`params.saveDev`] | `boolean` | Whether to save the package as a development dependency. |
+| [`params.saveProd`] | `boolean` | Whether to save the package as a production dependency. This is the default   behavior. |
+| [`params.verbose`] | `boolean` | Whether to print verbose output. |
+
+**Returns**: `Promise.<{installedPackages: Array.<string>, localPackages: Array.<string>, productionPackages: Array.<string>}>` - A promise
+  that resolves to a summary of the installed packages.
+
+<a id="update"></a>
+### `update(params)` ⇒ `Promise.<{updated: boolean, actions: Array.<string>, result: Object}>` <sup>↱<sup>[source code](./src/update.mjs#L21)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+
+Updates project dependencies or global installs. Requires at 'global' and/or `projectPath` be provided.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `params` | `Object` | The parameters for the update function. |
+| [`params.dryRun`] | `boolean` | Check for outdated dependecies and display results, but don't actually update. |
+| [`params.global`] | `boolean` | Operate on the globally installed packages instead of `projectPath` dependencies.   One of `global` and `projectPath` must be provided. |
+| [`params.packages`] | `Array.<string>` | Only check the named packages. If `global` is true, this would be a list of   global packages and otherwise a list of `projectPath` dependencies. |
+| [`params.projectPath`] | `string` | The path to the project to update. One of `global` and `projectPath` must be   provided. |
+
+**Returns**: `Promise.<{updated: boolean, actions: Array.<string>, result: Object}>` - A promise that resolves to a summary of
+  the updates.
+
+<a id="view"></a>
+### `view(params)` ⇒ `Promise.<Object>` <sup>↱<sup>[source code](./src/view.mjs#L10)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+
+Retrieves package metadata from the npm registry using `npm view`.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `params` | `Object` | The parameters for the view function. |
+| `params.packageName` | `string` | The name of the package to view. |
+| [`params.version`] | `string` | The specific version to view. If omitted, returns data for the latest version. |
+
+**Returns**: `Promise.<Object>` - A promise that resolves to the parsed JSON object returned by `npm view --json`.
+

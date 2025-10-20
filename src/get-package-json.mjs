@@ -4,14 +4,12 @@ import * as fsPath from 'node:path'
 import findRoot from 'find-root'
 
 /**
- * Determines the package data (`package.json`) the package containing `pkgDir`. As `pkgDir` needs merely to be within
- * the package (and not necessarily the root), you can often use `__dirname`.
- *
- * ### Options
- *
- * - `pkgDir`: __(req, string)__ a directory within the package. This is not necessarily the root directory.
+ * Find and parses the `package.json` associated with the package containing `pkgDir`. The method will check parent
+ * directories until it finds a `package.json` file or runs out of parent directories.
+ * @param {string} pkgDir - The path to the package directory or sub-directory.
+ * @returns {Promise<Object>} A promise that resolves to the parsed `package.json` file.
  */
-const getPackageJSON = async({ pkgDir = throw new Error('Must provide pkgDir.') } = {}) => {
+const getPackageJSON = async(pkgDir = throw new Error('Must provide pkgDir.')) => {
   // TODO: would like to support caching using a passed in cache. That would give us the ability to clear the cache
   // whenever something else makes a state change
   const pkgRootDir = findRoot(pkgDir)

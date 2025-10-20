@@ -2,15 +2,10 @@ import { tryExec } from '@liquid-labs/shell-toolkit'
 
 /**
  * Retrieves package metadata from the npm registry using `npm view`.
- *
- * ### Parameters
- *
- * - `packageName`: __(req, string)__ the name of the package to view.
- * - `version`: __(opt, string)__ the specific version to view. If omitted, returns data for the latest version.
- *
- * ### Returns
- *
- * The parsed JSON object returned by `npm view --json`.
+ * @param {Object} params - The parameters for the view function.
+ * @param {string} params.packageName - The name of the package to view.
+ * @param {string} [params.version] - The specific version to view. If omitted, returns data for the latest version.
+ * @returns {Promise<Object>} A promise that resolves to the parsed JSON object returned by `npm view --json`.
  */
 const view = async({ packageName, version }) => {
   if (!packageName) {

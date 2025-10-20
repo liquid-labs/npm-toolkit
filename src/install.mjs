@@ -33,6 +33,21 @@ const findLocalPackage = async({ devPaths, pkgSpec }) => {
   return null
 }
 
+/**
+ * Installs packages using `npm install`.
+ * @param {Object} params - The parameters for the install function.
+ * @param {string[]} [params.devPaths] - An array of paths to search for local packages. Any local packages found will
+ *   be used instead of installing from the registry.
+ * @param {boolean} [params.global] - Whether to install globally.
+ * @param {string[]} params.packages - List of package specifiers to install. At least one package must be specified.
+ * @param {string} [params.projectPath] - The path to the project to install.
+ * @param {boolean} [params.saveDev] - Whether to save the package as a development dependency.
+ * @param {boolean} [params.saveProd] - Whether to save the package as a production dependency. This is the default
+ *   behavior.
+ * @param {boolean} [params.verbose] - Whether to print verbose output.
+ * @returns {Promise<{installedPackages: string[], localPackages: string[], productionPackages: string[]}>} A promise
+ *   that resolves to a summary of the installed packages.
+ */
 const install = async({ devPaths, global, packages, projectPath, saveDev, saveProd, verbose }) => {
   if (packages === undefined || packages.length === 0) {
     throw new Error("No 'packages' specified; specify at least one package.")

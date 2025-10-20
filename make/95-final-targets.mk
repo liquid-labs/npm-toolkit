@@ -5,23 +5,21 @@
 .PRECIOUS: $(PRECIOUS_TARGETS)
 
 build: $(BUILD_TARGETS)
-
-PHONY_TARGETS+=build
+.PHONY+=build
 
 all: build
+.PHONY+=all
+
+docs: $(DOC_TARGETS)
+.PHONY+=docs
 
 lint: $(LINT_TARGETS)
-
 lint-fix: $(LINT_FIX_TARGETS)
-
-PHONY_TARGETS+=lint lint-fix
+.PHONY+=lint lint-fix
 
 test: $(TEST_TARGETS)
-
-PHONY_TARGETS+= test
+.PHONY+= test
 
 qa: test lint
+.PHONY+=qa
 
-PHONY_TARGETS+=qa
-
-.PHONY: $(PHONY_TARGETS)
