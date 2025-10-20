@@ -44,6 +44,7 @@ const install = async({ devPaths, global, packages, projectPath, saveDev, savePr
     throw new Error("Must specify 'projectPath' for non-global installs.")
   }
 
+  console.log('install A') // DEBUG
   const pathBit = projectPath === undefined ? '' : 'cd ' + projectPath + ' && '
   const globalBit = global === true ? '--global ' : ''
   const saveBit = saveDev === true ? '--save-dev ' : saveProd === true ? '--save-prod ' : ''
@@ -65,10 +66,11 @@ const install = async({ devPaths, global, packages, projectPath, saveDev, savePr
       return p
     })))
     .join(' ')
-
+  console.log('install B') // DEBUG
   const cmd = pathBit + 'npm install ' + globalBit + saveBit + installPkgs
+  console.log(`install cmd: ${cmd}`)
   tryExec(cmd, { silent : !verbose })
-
+  console.log('install C') // DEBUG
   return {
     installedPackages,
     localPackages,
