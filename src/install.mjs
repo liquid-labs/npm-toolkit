@@ -65,10 +65,8 @@ const install = async({ devPaths, global, packages, projectPath, saveDev, savePr
       return p
     })))
     .join(' ')
-
   const cmd = pathBit + 'npm install ' + globalBit + saveBit + installPkgs
   tryExec(cmd, { silent : !verbose })
-
   return {
     installedPackages,
     localPackages,

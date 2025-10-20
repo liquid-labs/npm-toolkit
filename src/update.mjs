@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
-import * as semver from 'semver'
+import * as semver from '@liquid-labs/semver-plus'
 
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
@@ -15,12 +15,10 @@ import { tryExec } from '@liquid-labs/shell-toolkit'
  *   One of `global` and `projectPath` must be provided.
  * - `packages`: __(opt, strings[])__ only check the named packages. If `global` is true, this would be a list of
  *   global packages and otherwise a list of `projectPath` dependencies.
- * - `projectName` __(opt, string)__ the name of the project to use in user output. This should be the NPM name. If
- *   none is provided, then the name will be extracted from `package.json` file at `projectPath`.
  * - `projectPath`: __(cond, string)__ the path to the project to update. One of `global` and `projectPath` must be
  *   provided.
  */
-const update = async({ dryRun, global, packages = [], projectName, projectPath }) => {
+const update = async({ dryRun, global, packages = [], projectPath }) => {
   if (projectPath === undefined && !global) {
     throw new Error("Must either set 'global' true (exclusive) and/or provide 'projectPath'.")
   }
@@ -28,30 +26,32 @@ const update = async({ dryRun, global, packages = [], projectName, projectPath }
     throw new Error("Cannot set 'global' true and specify 'projectPath'; do one or the other.")
   }
 
-  if (projectPath === undefined) {
+  let packageName
+  if (projectPath !== undefined) {
     const packageJSONPath = fsPath.join(projectPath, 'package.json')
     const packageJSONContents = await fs.readFile(packageJSONPath)
     const packageJSON = JSON.parse(packageJSONContents);
-    ({ name: projectName } = packageJSON)
+    ({ name: packageName } = packageJSON)
   }
 
   const actions = []
   let updateCommand
 
   // no 'set -e' because 'outdated' exits '1' if there's anything to update.
-  let outdatedCommand = (global === true ? '' : `cd "${projectPath}";`)
-    + 'npm '
-    + (global === true ? '--global ' : '')
-    + '--json outdated'
+  let outdatedCommand = `npm ${global ? '--global ' : ''} --json outdated`
 
   if (packages.length > 0) {
     outdatedCommand += packages.join(' ')
   }
 
-  const outdatedResult = tryExec(outdatedCommand, { noThrow : true })
+  const execOptions = { noThrow : true }
+  if (global !== true) {
+    execOptions.cwd = projectPath
+  }
+  const outdatedResult = tryExec(outdatedCommand, execOptions)
   if (outdatedResult.stderr) {
     // notice we can't check 'code' since 'no updates' exits with code '1'; this is arguably an npm bug...
-    throw new Error(`There was an error gathering update data: ${outdatedResult.stdout}`)
+    throw new Error(`There was an error gathering update data; stdout; command: ${outdatedCommand}; stdout: ${outdatedResult.stdout}, stderr: ${outdatedResult.stderr}`)
   }
 
   let outdatedData
@@ -63,30 +63,33 @@ const update = async({ dryRun, global, packages = [], projectName, projectPath }
   }
 
   if (!outdatedData || Object.keys(outdatedData).length === 0) {
-    actions.push(`No updates found for '${projectName}'.`)
+    actions.push(`No updates found for ${packageName ? `'${packageName}'` : 'global packages'}.`)
     return { updated : false, actions }
   }
 
-  updateCommand = `npm i ${dryRun ? '--dry-run ' : ''}`
+  updateCommand = `npm i --json${dryRun ? ' --dry-run' : ''}`
   for (const pkgName in outdatedData) { // eslint-disable-line guard-for-in
     const { current, wanted, latest } = outdatedData[pkgName]
     if (current !== wanted) { // because 'latest' might be different than wanted
       updateCommand += ` ${pkgName}@${wanted}`
       actions.push(`${dryRun ? 'DRY RUN: ' : ''}Updated ${pkgName}@${current} to ${wanted}${wanted === latest ? ' (latest)' : ''}`)
     }
-    else if (semver.gt(latest, current, { includePrerelease : true })) {
-      actions.push(`Major update available for ${pkgName}@${current} to ${latest}`)
+    else {
+      actions.push(`${pkgName}@${current} is the latest in-range version.`)
+    }
+    if (semver.gt(latest, current, { includePrerelease : true })) {
+      actions.push(`Update available for ${pkgName}@${current} to ${latest}. but was not automatically installed.`)
     }
   }
 
-  const updateResult = tryExec(`set -e
-    cd "${projectPath}"
-    ${updateCommand}`)
+  const updateResult = tryExec(updateCommand, execOptions)
   if (updateResult.code !== 0) {
-    throw new Error(`There was an error updating ${projectName} using '${updateCommand}': ${updateResult.stderr}`)
+    throw new Error(`There was an error updating ${packageName ? `'${packageName}' at ${projectPath}` : 'global packages'}; ${updateResult.summary}`)
   }
 
-  return { updated : true, actions }
+  const result = JSON.parse(updateResult.stdout)
+
+  return { updated : true, actions, result }
 }
 
 export { update }

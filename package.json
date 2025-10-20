@@ -28,7 +28,8 @@
   },
   "homepage": "https://github.com/liquid-labs/npm-toolkit#readme",
   "dependencies": {
-    "@liquid-labs/shell-toolkit": "^1.0.0-alpha.4",
+    "@liquid-labs/semver-plus": "^1.0.0-alpha.11",
+    "@liquid-labs/shell-toolkit": "^1.0.0-alpha.11",
     "find-root": "^1.1.0",
     "http-errors": "^2.0.0"
   },

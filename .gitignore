@@ -1,6 +1,7 @@
+/.claude
+/dist
 /node_modules
+/qa
+/test-staging
 /yalc.lock
 /.yalc
-/dist
-/test-staging
-/qa
