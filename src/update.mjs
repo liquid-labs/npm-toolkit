@@ -88,6 +88,7 @@ const update = async({ dryRun, global, packages = [], projectPath }) => {
   }
 
   const result = JSON.parse(updateResult.stdout)
+  console.log(`updateResult.stdout: ${updateResult.stdout}\nresult: ${JSON.stringify(result, null, 2)}`) // DEBUG
 
   return { updated : true, actions, result }
 }
