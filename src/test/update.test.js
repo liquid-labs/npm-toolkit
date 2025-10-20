@@ -12,18 +12,13 @@ import { setupTestPackage } from './test-setup-lib'
 
 describe('update', () => {
   test('updates all packages by default', async() => {
-    console.log('test A') // DEBUG
     const { pkgPath, testPath } = await setupTestPackage({ pkgName : 'pkgIn001' })
-    console.log('test B') // DEBUG
 
     await install({ packages : ['http-errors@1.2.0'], projectPath : testPath })
-    console.log('test C') // DEBUG
     const pkgJSON = JSON.parse(await fs.readFile(pkgPath, { encoding : 'utf8' }))
-    console.log('test D') // DEBUG
     expect(pkgJSON.dependencies['http-errors']).toBe('^1.2.0')
 
     const { updated, actions, result } = await update({ projectPath : testPath })
-    console.log('test F') // DEBUG
     expect(updated).toBe(true)
     expect(actions.length).toBe(2) // update for 1.x and optional udpate to 2.x
     expect(actions[0]).toMatch(/http-errors/)
@@ -31,12 +26,13 @@ describe('update', () => {
 
     const { npmVer } = await getVersion()
     if (semver.gte(npmVer, '11.0.0-0')) {
-      console.log('test G-1') // DEBUG
       const httpErrorsChangeEntry = result.change.filter(({ from }) => from.name === 'http-errors')[0]
       expect(httpErrorsChangeEntry.from.version).toBe('1.2.0')
       expect(httpErrorsChangeEntry.to.version).toBe('1.8.1')
     }
-    else console.log('test G-2') // DEBUG
+    else { // prior to npm v 11.0.0, the result was a lot less granular
+      expect(result.changed).toBeGreaterThan(0)
+    }
 
     const updateResult = tryExec(`cd ${testPath} && npm ls http-errors`)
     console.log('test G') // DEBUG
