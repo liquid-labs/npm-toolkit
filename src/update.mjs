@@ -2,6 +2,9 @@ import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
 import * as semver from '@liquid-labs/semver-plus'
+import { validatePackageSpec } from './validate-package-spec'
+import { validatePath } from './lib/validate-path'
+import { escapeShellArg } from './lib/escape-shell-args'
 
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
@@ -26,6 +29,16 @@ const update = async({ dryRun, global, packages = [], projectPath }) => {
     throw new Error("Cannot set 'global' true and specify 'projectPath'; do one or the other.")
   }
 
+  // Validate all package specs upfront
+  for (const pkg of packages) {
+    validatePackageSpec(pkg, { throwIfInvalid : true })
+  }
+
+  // Validate projectPath if provided
+  if (projectPath !== undefined) {
+    validatePath(projectPath)
+  }
+
   let packageName
   if (projectPath !== undefined) {
     const packageJSONPath = fsPath.join(projectPath, 'package.json')
@@ -41,7 +54,8 @@ const update = async({ dryRun, global, packages = [], projectPath }) => {
   let outdatedCommand = `npm ${global ? '--global ' : ''} --json outdated`
 
   if (packages.length > 0) {
-    outdatedCommand += packages.join(' ')
+    // Packages are already validated, but escape for shell safety
+    outdatedCommand += ' ' + packages.map(p => escapeShellArg(p)).join(' ')
   }
 
   const execOptions = { noThrow : true }
@@ -71,7 +85,11 @@ const update = async({ dryRun, global, packages = [], projectPath }) => {
   for (const pkgName in outdatedData) { // eslint-disable-line guard-for-in
     const { current, wanted, latest } = outdatedData[pkgName]
     if (current !== wanted) { // because 'latest' might be different than wanted
-      updateCommand += ` ${pkgName}@${wanted}`
+      // Validate package name from npm output (defense in depth)
+      // and escape version spec for shell safety
+      validatePackageSpec(pkgName, { throwIfInvalid : true })
+      const versionSpec = escapeShellArg(`${pkgName}@${wanted}`)
+      updateCommand += ` ${versionSpec}`
       actions.push(`${dryRun ? 'DRY RUN: ' : ''}Updated ${pkgName}@${current} to ${wanted}${wanted === latest ? ' (latest)' : ''}`)
     }
     else {

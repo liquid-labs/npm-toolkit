@@ -36,6 +36,7 @@ _API generated with [dmd-readme-api](https://www.npmjs.com/package/dmd-readme-ap
   - [`getVersion()`](#getVersion): Retrieves the version of Node.js and npm installed on the system.
   - [`install()`](#install): Installs packages using `npm install`.
   - [`update()`](#update): Updates project dependencies or global installs.
+  - [`validatePackageSpec()`](#validatePackageSpec): Validates that a package specification is safe for use in shell commands and file operations.
   - [`view()`](#view): Retrieves package metadata from the npm registry using `npm view`.
 
 <a id="getPackageJSON"></a>
@@ -76,27 +77,28 @@ Retrieves the version of Node.js and npm installed on the system.
   versions as strings without the `v` prefix.
 
 <a id="install"></a>
-### `install(params)` ⇒ `Promise.<{installedPackages: Array.<string>, localPackages: Array.<string>, productionPackages: Array.<string>}>` <sup>↱<sup>[source code](./src/install.mjs#L51)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+### `install(params)` ⇒ `Promise.<{installedPackages: Array.<string>, localPackages: Array.<string>, productionPackages: Array.<string>}>` <sup>↱<sup>[source code](./src/install.mjs#L55)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
 
 Installs packages using `npm install`.
 
 
-| Param | Type | Description |
-| --- | --- | --- |
-| `params` | `Object` | The parameters for the install function. |
-| [`params.devPaths`] | `Array.<string>` | An array of paths to search for local packages. Any local packages found will   be used instead of installing from the registry. |
-| [`params.global`] | `boolean` | Whether to install globally. |
-| `params.packages` | `Array.<string>` | List of package specifiers to install. At least one package must be specified. |
-| [`params.projectPath`] | `string` | The path to the project to install. |
-| [`params.saveDev`] | `boolean` | Whether to save the package as a development dependency. |
-| [`params.saveProd`] | `boolean` | Whether to save the package as a production dependency. This is the default   behavior. |
-| [`params.verbose`] | `boolean` | Whether to print verbose output. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| `params` | `Object` |  | The parameters for the install function. |
+| [`params.allowFilePackages`] | `boolean` | `false` | Whether to allow 'file:' protocol package specs (e.g., 'file:../pkg'). |
+| [`params.devPaths`] | `Array.<string>` |  | An array of paths to search for local packages. Any local packages found will   be used instead of installing from the registry. |
+| [`params.global`] | `boolean` |  | Whether to install globally. |
+| `params.packages` | `Array.<string>` |  | List of package specifiers to install. At least one package must be specified. |
+| [`params.projectPath`] | `string` |  | The path to the project to install. |
+| [`params.saveDev`] | `boolean` |  | Whether to save the package as a development dependency. |
+| [`params.saveProd`] | `boolean` |  | Whether to save the package as a production dependency. This is the default   behavior. |
+| [`params.verbose`] | `boolean` |  | Whether to print verbose output. |
 
 **Returns**: `Promise.<{installedPackages: Array.<string>, localPackages: Array.<string>, productionPackages: Array.<string>}>` - A promise
   that resolves to a summary of the installed packages.
 
 <a id="update"></a>
-### `update(params)` ⇒ `Promise.<{updated: boolean, actions: Array.<string>, result: Object}>` <sup>↱<sup>[source code](./src/update.mjs#L21)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+### `update(params)` ⇒ `Promise.<{updated: boolean, actions: Array.<string>, result: Object}>` <sup>↱<sup>[source code](./src/update.mjs#L24)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
 
 Updates project dependencies or global installs. Requires at 'global' and/or `projectPath` be provided.
 
@@ -112,8 +114,27 @@ Updates project dependencies or global installs. Requires at 'global' and/or `pr
 **Returns**: `Promise.<{updated: boolean, actions: Array.<string>, result: Object}>` - A promise that resolves to a summary of
   the updates.
 
+<a id="validatePackageSpec"></a>
+### `validatePackageSpec(packageSpec, [options])` ⇒ `Object` <sup>↱<sup>[source code](./src/validate-package-spec.mjs#L16)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+
+Validates that a package specification is safe for use in shell commands and file operations.
+Supports standard npm package specs and file: protocol packages when allowFilePackages is true.
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| `packageSpec` | `string` |  | The package specification to validate (e.g., 'package@1.0.0', '@scope/pkg', 'file:../pkg') |
+| [`options`] | `Object` |  | Validation options |
+| [`options.allowFilePackages`] | `boolean` | `false` | Whether to allow 'file:' protocol package specs |
+| [`options.throwIfInvalid`] | `boolean` | `false` | If true, throws an error on validation failure. If false, returns result object with isValid=false. |
+
+**Returns**: `Object` - Validation result with { isValid: boolean, errorMsg?: string, isFilePackage?: boolean, cleanSpec?: string, packageName?: string, versionPart?: string, resolvedPath?: string }
+
+**Throws**: Validates that a package specification is safe for use in shell commands and file operations.
+Supports standard npm package specs and file: protocol packages when allowFilePackages is true.
+
 <a id="view"></a>
-### `view(params)` ⇒ `Promise.<Object>` <sup>↱<sup>[source code](./src/view.mjs#L10)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+### `view(params)` ⇒ `Promise.<Object>` <sup>↱<sup>[source code](./src/view.mjs#L12)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
 
 Retrieves package metadata from the npm registry using `npm view`.
 

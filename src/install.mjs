@@ -3,6 +3,9 @@ import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
 import { getPackageOrgBasenameAndVersion } from './get-package-org-basename-and-version'
+import { validatePackageSpec } from './validate-package-spec'
+import { validatePath } from './lib/validate-path'
+import { escapeShellArg } from './lib/escape-shell-args'
 
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
@@ -36,6 +39,7 @@ const findLocalPackage = async({ devPaths, pkgSpec }) => {
 /**
  * Installs packages using `npm install`.
  * @param {Object} params - The parameters for the install function.
+ * @param {boolean} [params.allowFilePackages=false] - Whether to allow 'file:' protocol package specs (e.g., 'file:../pkg').
  * @param {string[]} [params.devPaths] - An array of paths to search for local packages. Any local packages found will
  *   be used instead of installing from the registry.
  * @param {boolean} [params.global] - Whether to install globally.
@@ -48,7 +52,7 @@ const findLocalPackage = async({ devPaths, pkgSpec }) => {
  * @returns {Promise<{installedPackages: string[], localPackages: string[], productionPackages: string[]}>} A promise
  *   that resolves to a summary of the installed packages.
  */
-const install = async({ devPaths, global, packages, projectPath, saveDev, saveProd, verbose }) => {
+const install = async({ allowFilePackages = false, devPaths, global, packages, projectPath, saveDev, saveProd, verbose }) => {
   if (packages === undefined || packages.length === 0) {
     throw new Error("No 'packages' specified; specify at least one package.")
   }
@@ -59,7 +63,17 @@ const install = async({ devPaths, global, packages, projectPath, saveDev, savePr
     throw new Error("Must specify 'projectPath' for non-global installs.")
   }
 
-  const pathBit = projectPath === undefined ? '' : 'cd ' + projectPath + ' && '
+  // Validate all package specs upfront
+  for (const pkg of packages) {
+    validatePackageSpec(pkg, { allowFilePackages, throwIfInvalid : true })
+  }
+
+  // Validate and escape projectPath if provided
+  let pathBit = ''
+  if (projectPath !== undefined) {
+    validatePath(projectPath)
+    pathBit = 'cd ' + escapeShellArg(projectPath) + ' && '
+  }
   const globalBit = global === true ? '--global ' : ''
   const saveBit = saveDev === true ? '--save-dev ' : saveProd === true ? '--save-prod ' : ''
 
@@ -73,11 +87,13 @@ const install = async({ devPaths, global, packages, projectPath, saveDev, savePr
         const localPath = await findLocalPackage({ devPaths, pkgSpec : p })
         if (localPath !== null) {
           localPackages.push(p)
-          return localPath
+          // Escape local path for shell safety
+          return escapeShellArg(localPath)
         }
       }
       productionPackages.push(p)
-      return p
+      // Package specs are already validated, but escape for shell safety
+      return escapeShellArg(p)
     })))
     .join(' ')
   const cmd = pathBit + 'npm install ' + globalBit + saveBit + installPkgs
