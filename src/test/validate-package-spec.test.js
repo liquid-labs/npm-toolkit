@@ -287,33 +287,80 @@ describe('validatePath', () => {
 })
 
 describe('escapeShellArg', () => {
-  test('wraps simple strings in single quotes', () => {
-    expect(escapeShellArg('hello')).toBe("'hello'")
-    expect(escapeShellArg('package-name')).toBe("'package-name'")
+  const isWindows = process.platform.startsWith('win32')
+
+  test('wraps simple strings in quotes', () => {
+    if (isWindows) {
+      expect(escapeShellArg('hello')).toBe('"hello"')
+      expect(escapeShellArg('package-name')).toBe('"package-name"')
+    }
+    else {
+      expect(escapeShellArg('hello')).toBe("'hello'")
+      expect(escapeShellArg('package-name')).toBe("'package-name'")
+    }
   })
 
-  test('properly escapes single quotes within strings', () => {
-    expect(escapeShellArg("it's")).toBe("'it'\\''s'")
-    expect(escapeShellArg("don't")).toBe("'don'\\''t'")
+  test('properly escapes quotes within strings', () => {
+    if (isWindows) {
+      // On Windows, double quotes are escaped with backslash
+      expect(escapeShellArg('say "hello"')).toBe('"say \\"hello\\""')
+    }
+    else {
+      // On Unix, single quotes are escaped with '\''
+      expect(escapeShellArg("it's")).toBe("'it'\\''s'")
+      expect(escapeShellArg("don't")).toBe("'don'\\''t'")
+    }
   })
 
   test('escapes strings with shell metacharacters', () => {
     const dangerous = 'package; rm -rf /'
     const escaped = escapeShellArg(dangerous)
-    expect(escaped).toBe("'package; rm -rf /'")
-    // The semicolon and other chars are now safely inside single quotes
+    if (isWindows) {
+      expect(escaped).toBe('"package; rm -rf /"')
+    }
+    else {
+      expect(escaped).toBe("'package; rm -rf /'")
+    }
+    // The semicolon and other chars are now safely inside quotes
   })
 
   test('escapes strings with spaces', () => {
-    expect(escapeShellArg('hello world')).toBe("'hello world'")
+    if (isWindows) {
+      expect(escapeShellArg('hello world')).toBe('"hello world"')
+    }
+    else {
+      expect(escapeShellArg('hello world')).toBe("'hello world'")
+    }
+  })
+
+  test('handles file paths correctly', () => {
+    if (isWindows) {
+      // Windows paths - backslashes are literal unless before quotes
+      expect(escapeShellArg('C:\\Users\\test')).toBe('"C:\\Users\\test"')
+      expect(escapeShellArg('D:\\path\\to\\file')).toBe('"D:\\path\\to\\file"')
+      // Path ending with backslash (needs doubling before closing quote)
+      expect(escapeShellArg('C:\\Users\\')).toBe('"C:\\Users\\\\"')
+    }
+    else {
+      // Unix paths are just wrapped in single quotes
+      expect(escapeShellArg('/usr/local/bin')).toBe("'/usr/local/bin'")
+      expect(escapeShellArg('/path/to/file')).toBe("'/path/to/file'")
+    }
   })
 
   test('escapes complex strings safely', () => {
-    const complex = "test'with\"quotes`and$vars"
-    const escaped = escapeShellArg(complex)
-    // Single quotes protect everything except single quotes themselves
-    expect(escaped).toContain("'test")
-    expect(escaped).toContain("quotes`and$vars'")
+    if (isWindows) {
+      const complex = 'test with "quotes"'
+      const escaped = escapeShellArg(complex)
+      expect(escaped).toBe('"test with \\"quotes\\""')
+    }
+    else {
+      const complex = "test'with\"quotes`and$vars"
+      const escaped = escapeShellArg(complex)
+      // Single quotes protect everything except single quotes themselves
+      expect(escaped).toContain("'test")
+      expect(escaped).toContain("quotes`and$vars'")
+    }
   })
 
   test('throws on non-string input', () => {
