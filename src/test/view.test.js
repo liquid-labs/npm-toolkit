@@ -70,4 +70,60 @@ describe('view', () => {
     expect(result).toBeDefined()
     expect(result.name).toBe('find-root')
   })
+
+  describe('security - package name validation', () => {
+    test('rejects shell injection attempts in package names', async() => {
+      const maliciousPackages = [
+        'package;rm -rf /',
+        'package$(whoami)',
+        'package`cat /etc/passwd`',
+        'package|echo hacked',
+        'package&&malicious'
+      ]
+
+      for (const malicious of maliciousPackages) {
+        await expect(view({ packageName : malicious }))
+          .rejects.toThrow(/shell metacharacters|Invalid package name/i)
+      }
+    })
+
+    test('rejects path traversal attempts in package names', async() => {
+      const maliciousPackages = [
+        '../../../etc/passwd',
+        '../../malicious',
+        'package/../../../etc/hosts'
+      ]
+
+      for (const malicious of maliciousPackages) {
+        await expect(view({ packageName : malicious }))
+          .rejects.toThrow(/Invalid package name|invalid path characters/i)
+      }
+    })
+
+    test('rejects shell injection in version parameter', async() => {
+      const maliciousVersions = [
+        '1.0.0;rm -rf /',
+        '1.0.0$(whoami)',
+        '1.0.0&&echo hacked'
+      ]
+
+      for (const malicious of maliciousVersions) {
+        await expect(view({ packageName : 'http-errors', version : malicious }))
+          .rejects.toThrow(/shell metacharacters/i)
+      }
+    })
+
+    test('rejects reserved package names', async() => {
+      const reserved = ['node_modules', 'package.json', 'favicon.ico']
+
+      for (const name of reserved) {
+        await expect(view({ packageName : name }))
+          .rejects.toThrow(/reserved/i)
+      }
+
+      // '.' and '..' trigger different validation errors but are still rejected
+      await expect(view({ packageName : '.' })).rejects.toThrow()
+      await expect(view({ packageName : '..' })).rejects.toThrow()
+    })
+  })
 })

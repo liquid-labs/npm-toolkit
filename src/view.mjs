@@ -1,3 +1,5 @@
+import { validatePackageSpec } from './validate-package-spec'
+import { escapeShellArg } from './lib/escape-shell-args'
 import { tryExec } from '@liquid-labs/shell-toolkit'
 
 /**
@@ -13,7 +15,13 @@ const view = async({ packageName, version }) => {
   }
 
   const pkgSpec = version ? `${packageName}@${version}` : packageName
-  const cmd = `npm view --json ${pkgSpec}`
+
+  // Validate package spec for security
+  validatePackageSpec(pkgSpec, { throwIfInvalid : true })
+
+  // Escape for shell safety
+  const escapedSpec = escapeShellArg(pkgSpec)
+  const cmd = `npm view --json ${escapedSpec}`
 
   const result = tryExec(cmd, { noThrow : true })
 

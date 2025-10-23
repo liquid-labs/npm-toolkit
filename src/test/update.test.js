@@ -35,8 +35,65 @@ describe('update', () => {
     }
 
     const updateResult = tryExec(`cd ${testPath} && npm ls http-errors`)
-    console.log('test G') // DEBUG
     expect(updateResult.code).toBe(0)
     expect(updateResult.stdout.includes('http-errors@1.8.1')).toBe(true)
+  })
+
+  describe('security - package name validation', () => {
+    test('rejects shell injection attempts in package names', async() => {
+      const { testPath } = await setupTestPackage({ pkgName : 'pkgSec001' })
+      const maliciousPackages = [
+        'package;rm -rf /',
+        'package$(whoami)',
+        'package`cat /etc/passwd`',
+        'package|echo hacked',
+        'package&&malicious'
+      ]
+
+      for (const malicious of maliciousPackages) {
+        await expect(update({
+          packages    : [malicious],
+          projectPath : testPath
+        })).rejects.toThrow(/shell metacharacters|Invalid package name/i)
+      }
+    })
+
+    test('rejects path traversal attempts in package names', async() => {
+      const { testPath } = await setupTestPackage({ pkgName : 'pkgSec002' })
+      const maliciousPackages = [
+        '../../../etc/passwd',
+        '../../malicious',
+        'package/../../../etc/hosts'
+      ]
+
+      for (const malicious of maliciousPackages) {
+        await expect(update({
+          packages    : [malicious],
+          projectPath : testPath
+        })).rejects.toThrow(/Invalid package name|invalid path characters/i)
+      }
+    })
+
+    test('rejects shell injection attempts in projectPath', async() => {
+      await expect(update({
+        projectPath : '/tmp;rm -rf /'
+      })).rejects.toThrow(/shell metacharacters/i)
+    })
+
+    test('rejects reserved package names', async() => {
+      const { testPath } = await setupTestPackage({ pkgName : 'pkgSec003' })
+      const reserved = ['node_modules', 'package.json', 'favicon.ico']
+
+      for (const name of reserved) {
+        await expect(update({
+          packages    : [name],
+          projectPath : testPath
+        })).rejects.toThrow(/reserved/i)
+      }
+
+      // '.' and '..' trigger different validation errors but are still rejected
+      await expect(update({ packages : ['.'], projectPath : testPath })).rejects.toThrow()
+      await expect(update({ packages : ['..'], projectPath : testPath })).rejects.toThrow()
+    })
   })
 }, 30000) // update can take a bit; give it 30 seconds
