@@ -1,0 +1,29 @@
+Test git rev: 18b148035d168fa46a5125eafbf93beee985c8d0
+PASS test/install.test.js (7.722 s)
+PASS test/view.test.js (7.389 s)
+PASS test/update.test.js
+PASS test/validate-package-spec.test.js
+PASS test/get-package-org-basename-and-version.test.js
+PASS test/get-package-json.test.js
+-------------------------------------------|---------|----------|---------|---------|-----------------------------
+File                                       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s           
+-------------------------------------------|---------|----------|---------|---------|-----------------------------
+All files                                  |   91.45 |    81.87 |      92 |    91.6 |                             
+ src                                       |   92.06 |    80.59 |   95.23 |   92.27 |                             
+  get-package-json.mjs                     |   92.85 |     87.5 |     100 |   91.66 | 17                          
+  get-package-org-basename-and-version.mjs |   96.15 |    88.88 |     100 |   96.15 | 37                          
+  get-version.mjs                          |     100 |      100 |     100 |     100 |                             
+  install.mjs                              |    92.3 |    79.31 |     100 |   92.15 | 36,57,60,63                 
+  update.mjs                               |   82.14 |    56.75 |   66.66 |   83.33 | 26,29,58,68,76,80-81,96,105 
+  validate-package-spec.mjs                |    96.1 |    95.74 |     100 |   96.05 | 58,85,133                   
+  view.mjs                                 |   94.11 |      100 |     100 |   94.11 | 36                          
+ src/lib                                   |    86.2 |    93.33 |      75 |   85.71 |                             
+  escape-shell-args.mjs                    |      60 |       50 |      50 |      60 | 21-30                       
+  validate-path.mjs                        |     100 |      100 |     100 |     100 |                             
+-------------------------------------------|---------|----------|---------|---------|-----------------------------
+
+Test Suites: 6 passed, 6 total
+Tests:       93 passed, 93 total
+Snapshots:   0 total
+Time:        19.58 s, estimated 20 s
+Ran all test suites.
