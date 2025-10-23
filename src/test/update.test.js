@@ -35,7 +35,6 @@ describe('update', () => {
     }
 
     const updateResult = tryExec(`cd ${testPath} && npm ls http-errors`)
-    console.log('test G') // DEBUG
     expect(updateResult.code).toBe(0)
     expect(updateResult.stdout.includes('http-errors@1.8.1')).toBe(true)
   })
