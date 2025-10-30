@@ -12,16 +12,20 @@ import findRoot from 'find-root'
 const getPackageJSON = async(pkgDir = throw new Error('Must provide pkgDir.')) => {
   // TODO: would like to support caching using a passed in cache. That would give us the ability to clear the cache
   // whenever something else makes a state change
-  const pkgRootDir = findRoot(pkgDir)
-  if (!pkgRootDir) {
-    throw new Error(`No 'package.json' found when searching package root from: ${pkgDir}`)
+  try {
+    const pkgRootDir = findRoot(pkgDir)
+
+    const packagePath = fsPath.join(pkgRootDir, 'package.json') // we can trust we're in the root
+    const packageContents = await fs.readFile(packagePath, { encoding : 'utf8' })
+    const pkgJSON = JSON.parse(packageContents)
+
+    return pkgJSON
   }
-
-  const packagePath = fsPath.join(pkgRootDir, 'package.json') // we can trust we're in the root
-  const packageContents = await fs.readFile(packagePath, { encoding : 'utf8' })
-  const pkgJSON = JSON.parse(packageContents)
-
-  return pkgJSON
+  catch (e) {
+    // unfortunately, find-root does not set code = 'ENOENT' or anytnhing; but the only reason it throws (as of
+    // 2025-10-29) is because it can't find a package.json file.
+    throw new Error(`No 'package.json' found when searching package root from: ${pkgDir}`, { cause : e })
+  }
 }
 
 export { getPackageJSON }
