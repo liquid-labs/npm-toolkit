@@ -134,7 +134,7 @@ Supports standard npm package specs and file: protocol packages when allowFilePa
 Supports standard npm package specs and file: protocol packages when allowFilePackages is true.
 
 <a id="view"></a>
-### `view(params)` ⇒ `Promise.<Object>` <sup>↱<sup>[source code](./src/view.mjs#L12)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
+### `view(params)` ⇒ `Promise.<(Object|null)>` <sup>↱<sup>[source code](./src/view.mjs#L14)</sup></sup> <sup>⇧<sup>[global index](#global-function-index)</sup></sup>
 
 Retrieves package metadata from the npm registry using `npm view`.
 
@@ -143,7 +143,9 @@ Retrieves package metadata from the npm registry using `npm view`.
 | --- | --- | --- |
 | `params` | `Object` | The parameters for the view function. |
 | `params.packageName` | `string` | The name of the package to view. |
+| [`params.throwOnNotFound`] | `boolean` | If true, then a '404' error will throw rather than return null. |
 | [`params.version`] | `string` | The specific version to view. If omitted, returns data for the latest version. |
 
-**Returns**: `Promise.<Object>` - A promise that resolves to the parsed JSON object returned by `npm view --json`.
+**Returns**: `Promise.<(Object|null)>` - A promise that resolves to the parsed JSON object returned by `npm view --json` or
+  `null` if no package info is found.
 
