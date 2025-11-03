@@ -39,16 +39,28 @@ describe('view', () => {
     await expect(view({})).rejects.toThrow(/Must provide 'packageName'/)
   })
 
-  test('throws error for non-existent package', async() => {
+  test('returns null for non-existent package (throwOnNotFound : unset)', async() => {
     await expect(
       view({ packageName : 'this-package-definitely-does-not-exist-12345' })
-    ).rejects.toThrow(/not found in registry/)
+    ).resolves.toBe(null)
   })
 
-  test('throws error for non-existent version', async() => {
+  test('returns null for non-existent version (throwOnNotFound : unset)', async() => {
     await expect(
       view({ packageName : 'http-errors', version : '999.999.999' })
-    ).rejects.toThrow(/not found in registry/)
+    ).resolves.toBe(null)
+  })
+
+  test('throws error for non-existent package (throwOnNotFound : true)', async() => {
+    await expect(
+      view({ packageName : 'this-package-definitely-does-not-exist-12345', throwOnNotFound : true })
+    ).rejects.toThrow(/not found/i)
+  })
+
+  test('throws error for non-existent version (throw onNotFound : true)', async() => {
+    await expect(
+      view({ packageName : 'http-errors', version : '999.999.999', throwOnNotFound : true })
+    ).rejects.toThrow(/no match found for version/i)
   })
 
   test('returns complete package data structure', async() => {
