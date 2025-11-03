@@ -9,7 +9,7 @@
     "lint:fix": "make lint-fix",
     "test": "make test",
     "prepack": "npm run build",
-    "preversion": "npm run qa",
+    "preversion": "npm run build && npm run qa",
     "qa": "make qa"
   },
   "engines": {
